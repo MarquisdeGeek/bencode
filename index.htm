@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+
+<head></head>
+
+<body>
+ <h1>Torrent file parser</h1>
+ 
+ Drop file here:
+ <div id="holder" border=1> <img src="" width="100" height="100"/> </div>
+ 
+ <div id="result"></div>
+
+ 
+<script type="text/javascript">
+
+var holder = document.getElementById('holder');
+
+	// ondragover is necessary to switch the cursor to move, and therefore accept the file
+	holder.ondragover = function () { this.className = 'hover'; return false; };	
+	// ondragend is necessary to switch is back; but not to support the drag and drop
+	holder.ondragend = function () { this.className = ''; return false; };
+
+	if (typeof window.FileReader === 'undefined') {
+		document.getElementById('result').innerHTML = "FileReader API not available in your browser. This will not work.";
+	}
+	
+	holder.ondrop = function (e) {
+		e.preventDefault();
+
+		 var file = e.dataTransfer.files[0],
+			reader = new FileReader();
+			reader.onload = function (event) {
+				var b = new bencode();
+				var o = b.decode(event.target.result);
+
+				document.getElementById("result").innerHTML = JSON.stringify(o, undefined, 2);
+			  };
+		console.log(file);
+		reader.readAsArrayBuffer(file);
+
+		return false;
+	};
+
+</script>
+
+<script type="text/javascript" src="bencode.js"></script>
+   
+</body></html>
